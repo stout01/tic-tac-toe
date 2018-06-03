@@ -27,6 +27,10 @@ class Board extends Component {
   };
 
   onSquareUpdate = (y, x) => {
+    if (this.state.isWinner) {
+      return;
+    }
+
     this.setState(
       produce(draft => {
         draft.squares[y][x].marker = draft.xIsNext ? 'X' : 'O';
