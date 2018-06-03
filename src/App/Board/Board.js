@@ -25,27 +25,34 @@ class Board extends Component {
   }
 
   componentDidMount() {
-    if (this.state.computers === 2) {
-      this.componentDidUpdate();
+    if (this.isComputersTurn()) {
+      this.performComputerTurn();
     }
   }
 
   componentDidUpdate() {
-    const { computers, xIsNext } = this.state;
-    if (
-      !this.isGameOver() &&
-      (computers === 2 || (computers === 1 && !xIsNext))
-    ) {
-      const emptySquares = this.getEmptySquares();
-      const randomSquare =
-        emptySquares[Math.floor(Math.random() * emptySquares.length)];
-
-      this.onSquareUpdate(
-        randomSquare.location.row,
-        randomSquare.location.column,
-      );
+    if (this.isComputersTurn()) {
+      this.performComputerTurn();
     }
   }
+
+  isComputersTurn = () => {
+    const { computers, xIsNext } = this.state;
+    return (
+      !this.isGameOver() && (computers === 2 || (computers === 1 && !xIsNext))
+    );
+  };
+
+  performComputerTurn = () => {
+    const emptySquares = this.getEmptySquares();
+    const randomSquare =
+      emptySquares[Math.floor(Math.random() * emptySquares.length)];
+
+    this.onSquareUpdate(
+      randomSquare.location.row,
+      randomSquare.location.column,
+    );
+  };
 
   isGameOver = () => this.state.isTie || this.state.isWinner;
 
