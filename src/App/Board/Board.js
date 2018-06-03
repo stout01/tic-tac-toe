@@ -10,6 +10,7 @@ class Board extends Component {
     this.state = {
       squares: this.getInitialSquareState(),
       xIsNext: true,
+      isWinner: false,
     };
   }
 
@@ -25,17 +26,33 @@ class Board extends Component {
     return squares;
   };
 
-  onSquareUpdate = (x, y) => {
+  onSquareUpdate = (y, x) => {
     this.setState(
       produce(draft => {
-        draft.squares[x][y].marker = draft.xIsNext ? 'X' : 'O';
+        draft.squares[y][x].marker = draft.xIsNext ? 'X' : 'O';
         draft.xIsNext = !draft.xIsNext;
+        draft.isWinner = this.checkForWinner(draft.squares);
       }),
     );
   };
 
-  checkForWinner = () => {
-    return this.checkRows(this.state.squares);
+  checkForWinner = squares => {
+    return (
+      this.checkRow(getLeftDiagonal(squares)) ||
+      this.checkRow(getRightDiagonal(squares)) ||
+      this.checkRows(squares) ||
+      this.checkColumns(squares)
+    );
+  };
+
+  checkColumns = squares => {
+    for (let x = 0; x < this.props.boardSize; x++) {
+      if (this.checkRow(getColumn(squares, x))) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   checkRows = squares => {
@@ -53,7 +70,7 @@ class Board extends Component {
       let value = 0;
       if (square.marker === 'X') {
         value = 1;
-      } else if (square.marker === 'Y') {
+      } else if (square.marker === 'O') {
         value = -1;
       }
 
@@ -82,11 +99,42 @@ class Board extends Component {
   render() {
     return (
       <table>
-        <thead>{this.checkForWinner() ? 'Winner!' : ''}</thead>
+        <thead>
+          <tr>
+            <th colSpan={this.props.boardSize}>
+              {this.state.isWinner ? 'Winner!' : 'Game in progress...'}
+            </th>
+          </tr>
+        </thead>
         <tbody>{this.generateRows()}</tbody>
       </table>
     );
   }
+}
+
+function getColumn(matrix, col) {
+  let column = [];
+  for (let i = 0; i < matrix.length; i++) {
+    column.push(matrix[i][col]);
+  }
+  return column;
+}
+
+function getLeftDiagonal(matrix) {
+  let diagonal = [];
+  for (let i = 0; i < matrix.length; i++) {
+    diagonal.push(matrix[i][i]);
+  }
+  return diagonal;
+}
+
+function getRightDiagonal(matrix) {
+  let diagonal = [];
+  for (let y = 0, x = matrix.length - 1; y < matrix.length; x--, y++) {
+    diagonal.push(matrix[y][x]);
+  }
+  console.log(diagonal);
+  return diagonal;
 }
 
 export default Board;
