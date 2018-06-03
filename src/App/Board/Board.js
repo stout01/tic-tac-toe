@@ -1,6 +1,7 @@
 import produce from 'immer';
 import React, { Component } from 'react';
 
+import BoardSettings from './BoardSettings/BoardSettings';
 import Square from './Square/Square';
 
 class Board extends Component {
@@ -8,38 +9,33 @@ class Board extends Component {
     super(props);
 
     this.state = {
-      squares: this.getInitialSquareState(props.boardSize),
+      squares: this.getInitialSquareState(3),
       gameStatus: 'Game in progress...',
       xIsNext: true,
       isWinner: false,
       isTie: false,
-      computers: props.computers,
+      boardSize: 3,
+      computerPlayers: 0,
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      squares: this.getInitialSquareState(nextProps.boardSize),
-      computers: nextProps.computers,
-    });
-  }
-
   componentDidMount() {
-    if (this.isComputersTurn()) {
+    if (this.isComputerTurn()) {
       this.performComputerTurn();
     }
   }
 
   componentDidUpdate() {
-    if (this.isComputersTurn()) {
+    if (this.isComputerTurn()) {
       this.performComputerTurn();
     }
   }
 
-  isComputersTurn = () => {
-    const { computers, xIsNext } = this.state;
+  isComputerTurn = () => {
+    const { computerPlayers, xIsNext } = this.state;
     return (
-      !this.isGameOver() && (computers === 2 || (computers === 1 && !xIsNext))
+      !this.isGameOver() &&
+      (computerPlayers === 2 || (computerPlayers === 1 && !xIsNext))
     );
   };
 
@@ -52,6 +48,26 @@ class Board extends Component {
       randomSquare.location.row,
       randomSquare.location.column,
     );
+  };
+
+  setBoardSize = boardSize => {
+    this.setState({
+      boardSize,
+      squares: this.getInitialSquareState(boardSize),
+      isWinner: false,
+      isTie: false,
+      xIsNext: true,
+    });
+  };
+
+  setComputerPlayers = computerPlayers => {
+    this.setState({
+      computerPlayers,
+      squares: this.getInitialSquareState(this.state.boardSize),
+      isWinner: false,
+      isTie: false,
+      xIsNext: true,
+    });
   };
 
   isGameOver = () => this.state.isTie || this.state.isWinner;
@@ -120,7 +136,7 @@ class Board extends Component {
   };
 
   checkColumns = squares => {
-    for (let x = 0; x < this.props.boardSize; x++) {
+    for (let x = 0; x < this.state.boardSize; x++) {
       if (this.checkRow(getColumn(squares, x))) {
         return true;
       }
@@ -151,7 +167,7 @@ class Board extends Component {
       return total + value;
     }, 0);
 
-    return Math.abs(rowValue) === this.props.boardSize;
+    return Math.abs(rowValue) === this.state.boardSize;
   };
 
   generateSquares = (rowIndex, row) => {
@@ -172,14 +188,26 @@ class Board extends Component {
 
   render() {
     return (
-      <table>
-        <thead>
-          <tr>
-            <th colSpan={this.props.boardSize}>{this.state.gameStatus}</th>
-          </tr>
-        </thead>
-        <tbody>{this.generateRows()}</tbody>
-      </table>
+      <div>
+        <div className="d-flex justify-content-center my-5">
+          <BoardSettings
+            boardSize={this.state.boardSize}
+            updateBoardSize={this.setBoardSize}
+            computerCount={this.state.computerPlayers}
+            updateComputerCount={this.setComputerPlayers}
+          />
+        </div>
+        <div className="d-flex justify-content-center">
+          <table>
+            <thead>
+              <tr>
+                <th colSpan={this.state.boardSize}>{this.state.gameStatus}</th>
+              </tr>
+            </thead>
+            <tbody>{this.generateRows()}</tbody>
+          </table>
+        </div>
+      </div>
     );
   }
 }
