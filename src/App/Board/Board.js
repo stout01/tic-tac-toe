@@ -9,6 +9,7 @@ class Board extends Component {
 
     this.state = {
       squares: this.getInitialSquareState(),
+      xIsNext: true,
     };
   }
 
@@ -27,7 +28,8 @@ class Board extends Component {
   onSquareUpdate = (x, y) => {
     this.setState(
       produce(draft => {
-        draft.squares[x][y].marker = 'x';
+        draft.squares[x][y].marker = draft.xIsNext ? 'X' : 'O';
+        draft.xIsNext = !draft.xIsNext;
       }),
     );
   };
