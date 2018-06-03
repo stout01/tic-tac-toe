@@ -13,12 +13,38 @@ class Board extends Component {
       xIsNext: true,
       isWinner: false,
       isTie: false,
+      computers: props.computers,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ squares: this.getInitialSquareState(nextProps.boardSize) });
   }
+
+  componentDidMount() {
+    if (this.state.computers === 2) {
+      this.componentDidUpdate();
+    }
+  }
+
+  componentDidUpdate() {
+    const { computers, xIsNext } = this.state;
+    if (
+      !this.isGameOver() &&
+      (computers === 2 || (computers === 1 && !xIsNext))
+    ) {
+      const emptySquares = this.getEmptySquares();
+      const randomSquare =
+        emptySquares[Math.floor(Math.random() * emptySquares.length)];
+
+      this.onSquareUpdate(
+        randomSquare.location.row,
+        randomSquare.location.column,
+      );
+    }
+  }
+
+  isGameOver = () => this.state.isTie || this.state.isWinner;
 
   getInitialSquareState = boardSize => {
     const squares = [];
