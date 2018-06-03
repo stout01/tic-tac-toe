@@ -19,8 +19,8 @@ const BoardSettings = ({
     'Computer vs Computer',
   ];
   return (
-    <div>
-      <div>
+    <div className="d-flex">
+      <div className="mr-3">
         <UncontrolledDropdown>
           <DropdownToggle caret>
             {computerCountText[computerCount]}
@@ -30,7 +30,7 @@ const BoardSettings = ({
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>
-      <div>
+      <div className="mr-3">
         <UncontrolledDropdown>
           <DropdownToggle caret>{`${boardSize}x${boardSize}`}</DropdownToggle>
           <DropdownMenu>
