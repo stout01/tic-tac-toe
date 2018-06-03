@@ -22,10 +22,10 @@ class Board extends Component {
 
   getInitialSquareState = boardSize => {
     const squares = [];
-    for (let x = 0; x < boardSize; x++) {
+    for (let row = 0; row < boardSize; row++) {
       const squareRow = [];
-      for (let y = 0; y < boardSize; y++) {
-        squareRow.push({ marker: '' });
+      for (let column = 0; column < boardSize; column++) {
+        squareRow.push({ marker: '', location: { row, column } });
       }
       squares.push(squareRow);
     }
@@ -56,6 +56,14 @@ class Board extends Component {
   };
 
   getSquare = (y, x, squares) => squares[y][x];
+
+  getEmptySquares = () => {
+    return this.state.squares.reduce(
+      (flatSquares, row, rowIndex) =>
+        flatSquares.concat(row.filter(square => !square.marker)),
+      [],
+    );
+  };
 
   checkForWinner = squares => {
     return (
