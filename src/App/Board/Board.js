@@ -8,17 +8,21 @@ class Board extends Component {
     super(props);
 
     this.state = {
-      squares: this.getInitialSquareState(),
+      squares: this.getInitialSquareState(props.boardSize),
       xIsNext: true,
       isWinner: false,
     };
   }
 
-  getInitialSquareState = () => {
+  componentWillReceiveProps(nextProps) {
+    this.setState({ squares: this.getInitialSquareState(nextProps.boardSize) });
+  }
+
+  getInitialSquareState = boardSize => {
     const squares = [];
-    for (let x = 0; x < this.props.boardSize; x++) {
+    for (let x = 0; x < boardSize; x++) {
       const squareRow = [];
-      for (let y = 0; y < this.props.boardSize; y++) {
+      for (let y = 0; y < boardSize; y++) {
         squareRow.push({ marker: '' });
       }
       squares.push(squareRow);
@@ -81,7 +85,7 @@ class Board extends Component {
       return total + value;
     }, 0);
 
-    return Math.abs(rowValue) === 3;
+    return Math.abs(rowValue) === this.props.boardSize;
   };
 
   generateSquares = (rowIndex, row) => {
