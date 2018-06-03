@@ -9,12 +9,17 @@ class App extends Component {
     super();
 
     this.state = {
-      size: 3,
+      boardSize: 3,
+      computerPlayers: 0,
     };
   }
 
   setBoardSize = size => {
     this.setState({ size });
+  };
+
+  setComputerPlayers = computerPlayers => {
+    this.setState({ computerPlayers });
   };
 
   render() {
@@ -25,12 +30,17 @@ class App extends Component {
         </header>
         <div className="d-flex justify-content-center mt-5">
           <BoardSettings
-            boardSize={this.state.size}
+            boardSize={this.state.boardSize}
             updateBoardSize={this.setBoardSize}
+            computerCount={this.state.computerPlayers}
+            updateComputerCount={this.setComputerPlayers}
           />
         </div>
         <div className="d-flex justify-content-center mt-5">
-          <Board boardSize={this.state.size} />
+          <Board
+            boardSize={this.state.boardSize}
+            computers={this.state.computerPlayers}
+          />
         </div>
       </div>
     );

@@ -18,7 +18,10 @@ class Board extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ squares: this.getInitialSquareState(nextProps.boardSize) });
+    this.setState({
+      squares: this.getInitialSquareState(nextProps.boardSize),
+      computers: nextProps.computers,
+    });
   }
 
   componentDidMount() {
