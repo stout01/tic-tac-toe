@@ -34,6 +34,35 @@ class Board extends Component {
     );
   };
 
+  checkForWinner = () => {
+    return this.checkRows(this.state.squares);
+  };
+
+  checkRows = squares => {
+    for (let x = 0; x < squares.length; x++) {
+      if (this.checkRow(squares[x])) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  checkRow = row => {
+    const rowValue = row.reduce((total, square, index) => {
+      let value = 0;
+      if (square.marker === 'X') {
+        value = 1;
+      } else if (square.marker === 'Y') {
+        value = -1;
+      }
+
+      return total + value;
+    }, 0);
+
+    return Math.abs(rowValue) === 3;
+  };
+
   generateSquares = (rowIndex, row) => {
     return row.map((square, index) => (
       <Square
@@ -53,6 +82,7 @@ class Board extends Component {
   render() {
     return (
       <table>
+        <thead>{this.checkForWinner() ? 'Winner!' : ''}</thead>
         <tbody>{this.generateRows()}</tbody>
       </table>
     );
