@@ -9,8 +9,10 @@ class Board extends Component {
 
     this.state = {
       squares: this.getInitialSquareState(props.boardSize),
+      gameStatus: 'Game in progress...',
       xIsNext: true,
       isWinner: false,
+      isTie: false,
     };
   }
 
@@ -31,7 +33,9 @@ class Board extends Component {
   };
 
   onSquareUpdate = (y, x) => {
-    if (this.state.isWinner) {
+    const square = this.getSquare(y, x, this.state.squares);
+
+    if (this.state.isWinner || square.marker) {
       return;
     }
 
@@ -40,9 +44,18 @@ class Board extends Component {
         draft.squares[y][x].marker = draft.xIsNext ? 'X' : 'O';
         draft.xIsNext = !draft.xIsNext;
         draft.isWinner = this.checkForWinner(draft.squares);
+        draft.isTie = draft.isWinner ? false : this.checkForTie(draft.squares);
+
+        if (draft.isWinner) {
+          draft.gameStatus = 'Winner!';
+        } else if (draft.isTie) {
+          draft.gameStatus = 'Tie!';
+        }
       }),
     );
   };
+
+  getSquare = (y, x, squares) => squares[y][x];
 
   checkForWinner = squares => {
     return (
@@ -51,6 +64,15 @@ class Board extends Component {
       this.checkRows(squares) ||
       this.checkColumns(squares)
     );
+  };
+
+  checkForTie = squares => {
+    const flatSquares = squares.reduce(
+      (flatSquares, row) => flatSquares.concat(row),
+      [],
+    );
+
+    return flatSquares.every(square => square.marker !== '');
   };
 
   checkColumns = squares => {
@@ -109,9 +131,7 @@ class Board extends Component {
       <table>
         <thead>
           <tr>
-            <th colSpan={this.props.boardSize}>
-              {this.state.isWinner ? 'Winner!' : 'Game in progress...'}
-            </th>
+            <th colSpan={this.props.boardSize}>{this.state.gameStatus}</th>
           </tr>
         </thead>
         <tbody>{this.generateRows()}</tbody>
@@ -141,7 +161,6 @@ function getRightDiagonal(matrix) {
   for (let y = 0, x = matrix.length - 1; y < matrix.length; x--, y++) {
     diagonal.push(matrix[y][x]);
   }
-  console.log(diagonal);
   return diagonal;
 }
 
