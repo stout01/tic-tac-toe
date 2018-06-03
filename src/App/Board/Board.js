@@ -32,8 +32,8 @@ class Board extends Component {
     return squares;
   };
 
-  onSquareUpdate = (y, x) => {
-    const square = this.getSquare(y, x, this.state.squares);
+  onSquareUpdate = (row, column) => {
+    const square = this.getSquare(row, column, this.state.squares);
 
     if (this.state.isWinner || square.marker) {
       return;
@@ -41,7 +41,7 @@ class Board extends Component {
 
     this.setState(
       produce(draft => {
-        draft.squares[y][x].marker = draft.xIsNext ? 'X' : 'O';
+        draft.squares[row][column].marker = draft.xIsNext ? 'X' : 'O';
         draft.xIsNext = !draft.xIsNext;
         draft.isWinner = this.checkForWinner(draft.squares);
         draft.isTie = draft.isWinner ? false : this.checkForTie(draft.squares);
@@ -55,7 +55,7 @@ class Board extends Component {
     );
   };
 
-  getSquare = (y, x, squares) => squares[y][x];
+  getSquare = (row, column, squares) => squares[row][column];
 
   getEmptySquares = () => {
     return this.state.squares.reduce(
@@ -94,8 +94,8 @@ class Board extends Component {
   };
 
   checkRows = squares => {
-    for (let x = 0; x < squares.length; x++) {
-      if (this.checkRow(squares[x])) {
+    for (let row = 0; row < squares.length; row++) {
+      if (this.checkRow(squares[row])) {
         return true;
       }
     }
@@ -166,8 +166,12 @@ function getLeftDiagonal(matrix) {
 
 function getRightDiagonal(matrix) {
   let diagonal = [];
-  for (let y = 0, x = matrix.length - 1; y < matrix.length; x--, y++) {
-    diagonal.push(matrix[y][x]);
+  for (
+    let row = 0, column = matrix.length - 1;
+    row < matrix.length;
+    column--, row++
+  ) {
+    diagonal.push(matrix[row][column]);
   }
   return diagonal;
 }
