@@ -106,7 +106,7 @@ class Board extends Component {
       produce(draft => {
         draft.squares[row][column].marker = draft.isXTurn ? 'X' : 'O';
         draft.isWinner = this.checkForWinner(draft.squares);
-        draft.isTie = draft.isWinner ? false : this.checkForTie(draft.squares);
+        draft.isTie = this.calculateTie(draft.squares);
 
         draft.gameStatus = this.getGameStatus(
           draft.isWinner,
@@ -128,6 +128,13 @@ class Board extends Component {
     return defaultGameStatus;
   }
 
+  calculateTie = squares => {
+    if (this.state.isWinner) {
+      return false;
+    }
+    return !arrayHelpers.getEmptyCellsByProperty(squares, 'marker').length;
+  };
+
   checkForWinner = squares => {
     return (
       this.checkRow(arrayHelpers.getLeftDiagonal(squares)) ||
@@ -135,15 +142,6 @@ class Board extends Component {
       this.checkRows(squares) ||
       this.checkColumns(squares)
     );
-  };
-
-  checkForTie = squares => {
-    const flatSquares = squares.reduce(
-      (flatSquares, row) => flatSquares.concat(row),
-      [],
-    );
-
-    return flatSquares.every(square => square.marker !== '');
   };
 
   checkColumns = squares => {
