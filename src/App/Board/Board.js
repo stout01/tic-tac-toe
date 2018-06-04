@@ -1,6 +1,8 @@
 import produce from 'immer';
 import React, { Component } from 'react';
 
+import * as arrayHelpers from '../../utilities/array-helpers';
+
 import BoardSettings from './BoardSettings/BoardSettings';
 import Square from './Square/Square';
 
@@ -121,8 +123,8 @@ class Board extends Component {
 
   checkForWinner = squares => {
     return (
-      this.checkRow(getLeftDiagonal(squares)) ||
-      this.checkRow(getRightDiagonal(squares)) ||
+      this.checkRow(arrayHelpers.getLeftDiagonal(squares)) ||
+      this.checkRow(arrayHelpers.getRightDiagonal(squares)) ||
       this.checkRows(squares) ||
       this.checkColumns(squares)
     );
@@ -139,7 +141,7 @@ class Board extends Component {
 
   checkColumns = squares => {
     for (let x = 0; x < this.state.boardSize; x++) {
-      if (this.checkRow(getColumn(squares, x))) {
+      if (this.checkRow(arrayHelpers.getColumn(squares, x))) {
         return true;
       }
     }
@@ -224,34 +226,6 @@ function SquareRow({ row, onSquareUpdate }) {
       }
     />
   ));
-}
-
-function getColumn(matrix, col) {
-  let column = [];
-  for (let i = 0; i < matrix.length; i++) {
-    column.push(matrix[i][col]);
-  }
-  return column;
-}
-
-function getLeftDiagonal(matrix) {
-  let diagonal = [];
-  for (let i = 0; i < matrix.length; i++) {
-    diagonal.push(matrix[i][i]);
-  }
-  return diagonal;
-}
-
-function getRightDiagonal(matrix) {
-  let diagonal = [];
-  for (
-    let row = 0, column = matrix.length - 1;
-    row < matrix.length;
-    column--, row++
-  ) {
-    diagonal.push(matrix[row][column]);
-  }
-  return diagonal;
 }
 
 export default Board;
