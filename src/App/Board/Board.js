@@ -105,7 +105,7 @@ class Board extends Component {
     this.setState(
       produce(draft => {
         draft.squares[row][column].marker = draft.isXTurn ? 'X' : 'O';
-        draft.isWinner = this.checkForWinner(draft.squares);
+        draft.isWinner = this.checkBoardForWinner(draft.squares);
         draft.isTie = this.calculateTie(draft.squares);
 
         draft.gameStatus = this.getGameStatus(
@@ -135,18 +135,18 @@ class Board extends Component {
     return !arrayHelpers.getEmptyCellsByProperty(squares, 'marker').length;
   };
 
-  checkForWinner = squares => {
+  checkBoardForWinner = squares => {
     return (
-      this.checkRow(arrayHelpers.getLeftDiagonal(squares)) ||
-      this.checkRow(arrayHelpers.getRightDiagonal(squares)) ||
-      this.checkRows(squares) ||
-      this.checkColumns(squares)
+      this.checkArrayForWinner(arrayHelpers.getLeftDiagonal(squares)) ||
+      this.checkArrayForWinner(arrayHelpers.getRightDiagonal(squares)) ||
+      this.checkRowsForWinner(squares) ||
+      this.checkColumnsForWinner(squares)
     );
   };
 
-  checkColumns = squares => {
+  checkColumnsForWinner = squares => {
     for (let x = 0; x < this.state.boardSize; x++) {
-      if (this.checkRow(arrayHelpers.getColumn(squares, x))) {
+      if (this.checkArrayForWinner(arrayHelpers.getColumn(squares, x))) {
         return true;
       }
     }
@@ -154,9 +154,9 @@ class Board extends Component {
     return false;
   };
 
-  checkRows = squares => {
+  checkRowsForWinner = squares => {
     for (let row = 0; row < squares.length; row++) {
-      if (this.checkRow(squares[row])) {
+      if (this.checkArrayForWinner(squares[row])) {
         return true;
       }
     }
@@ -164,7 +164,7 @@ class Board extends Component {
     return false;
   };
 
-  checkRow = row => {
+  checkArrayForWinner = row => {
     const rowValue = row.reduce((total, square, index) => {
       let value = 0;
       if (square.marker === 'X') {
