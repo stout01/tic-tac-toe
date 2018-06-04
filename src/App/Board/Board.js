@@ -19,7 +19,7 @@ class Board extends Component {
     return {
       squares: this.getInitialSquares(boardSize),
       gameStatus: defaultGameStatus,
-      xIsNext: true,
+      isXTurn: true,
       isWinner: false,
       isTie: false,
       boardSize: boardSize,
@@ -42,10 +42,10 @@ class Board extends Component {
   };
 
   isComputerTurn = () => {
-    const { computerPlayers, xIsNext } = this.state;
+    const { computerPlayers, isXTurn } = this.state;
     return (
       !this.isGameOver() &&
-      (computerPlayers === 2 || (computerPlayers === 1 && !xIsNext))
+      (computerPlayers === 2 || (computerPlayers === 1 && !isXTurn))
     );
   };
 
@@ -104,17 +104,17 @@ class Board extends Component {
 
     this.setState(
       produce(draft => {
-        draft.squares[row][column].marker = draft.xIsNext ? 'X' : 'O';
+        draft.squares[row][column].marker = draft.isXTurn ? 'X' : 'O';
         draft.isWinner = this.checkForWinner(draft.squares);
         draft.isTie = draft.isWinner ? false : this.checkForTie(draft.squares);
 
         draft.gameStatus = this.getGameStatus(
           draft.isWinner,
           draft.isTie,
-          draft.xIsNext,
+          draft.isXTurn,
         );
 
-        draft.xIsNext = !draft.xIsNext;
+        draft.isXTurn = !draft.isXTurn;
       }),
     );
   };
