@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 
 import * as arrayHelpers from '../../utilities/array-helpers';
 
+import './Board.css';
 import BoardSettings from './BoardSettings/BoardSettings';
 import Square from './Square/Square';
 
@@ -191,7 +192,7 @@ class Board extends Component {
             resetBoard={this.resetBoard}
           />
         </div>
-        <div className="d-flex justify-content-center">
+        <div className="d-flex m-auto table-container">
           <table>
             <thead>
               <tr>
