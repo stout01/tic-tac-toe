@@ -24,7 +24,7 @@ const BoardSettings = ({
     <div className="d-flex">
       <div className="mr-3">
         <UncontrolledDropdown>
-          <DropdownToggle color="primary" caret>
+          <DropdownToggle caret>
             {computerCountText[computerCount]}
           </DropdownToggle>
           <DropdownMenu>
@@ -34,10 +34,7 @@ const BoardSettings = ({
       </div>
       <div className="mr-3">
         <UncontrolledDropdown>
-          <DropdownToggle
-            color="primary"
-            caret
-          >{`${boardSize}x${boardSize}`}</DropdownToggle>
+          <DropdownToggle caret>{`${boardSize}x${boardSize}`}</DropdownToggle>
           <DropdownMenu>
             <BoardSizeList />
           </DropdownMenu>
