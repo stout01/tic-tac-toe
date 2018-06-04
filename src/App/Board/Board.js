@@ -6,6 +6,8 @@ import * as arrayHelpers from '../../utilities/array-helpers';
 import BoardSettings from './BoardSettings/BoardSettings';
 import Square from './Square/Square';
 
+const defaultGameStatus = 'Game in progress...';
+
 class Board extends Component {
   constructor(props) {
     super(props);
@@ -16,7 +18,7 @@ class Board extends Component {
   getInitialState = (boardSize = 3) => {
     return {
       squares: this.getInitialSquares(boardSize),
-      gameStatus: 'Game in progress...',
+      gameStatus: defaultGameStatus,
       xIsNext: true,
       isWinner: false,
       isTie: false,
@@ -26,16 +28,18 @@ class Board extends Component {
   };
 
   componentDidMount() {
-    if (this.isComputerTurn()) {
-      this.performComputerTurn();
-    }
+    this.takeComputerTurn();
   }
 
   componentDidUpdate() {
+    this.takeComputerTurn();
+  }
+
+  takeComputerTurn = () => {
     if (this.isComputerTurn()) {
       this.performComputerTurn();
     }
-  }
+  };
 
   isComputerTurn = () => {
     const { computerPlayers, xIsNext } = this.state;
@@ -101,18 +105,28 @@ class Board extends Component {
     this.setState(
       produce(draft => {
         draft.squares[row][column].marker = draft.xIsNext ? 'X' : 'O';
-        draft.xIsNext = !draft.xIsNext;
         draft.isWinner = this.checkForWinner(draft.squares);
         draft.isTie = draft.isWinner ? false : this.checkForTie(draft.squares);
 
-        if (draft.isWinner) {
-          draft.gameStatus = 'Winner!';
-        } else if (draft.isTie) {
-          draft.gameStatus = 'Tie!';
-        }
+        draft.gameStatus = this.getGameStatus(
+          draft.isWinner,
+          draft.isTie,
+          draft.xIsNext,
+        );
+
+        draft.xIsNext = !draft.xIsNext;
       }),
     );
   };
+
+  getGameStatus(isWinner, isTie, isXTurn) {
+    if (isWinner) {
+      return `${isXTurn ? 'X' : 'O'} Wins!`;
+    } else if (isTie) {
+      return 'Tie!';
+    }
+    return defaultGameStatus;
+  }
 
   checkForWinner = squares => {
     return (
