@@ -8,16 +8,20 @@ class Board extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      squares: this.getInitialSquares(3),
+    this.state = this.getInitialState();
+  }
+
+  getInitialState = (boardSize = 3) => {
+    return {
+      squares: this.getInitialSquares(boardSize),
       gameStatus: 'Game in progress...',
       xIsNext: true,
       isWinner: false,
       isTie: false,
-      boardSize: 3,
+      boardSize: boardSize,
       computerPlayers: 0,
     };
-  }
+  };
 
   componentDidMount() {
     if (this.isComputerTurn()) {
@@ -52,22 +56,20 @@ class Board extends Component {
 
   setBoardSize = boardSize => {
     this.setState({
-      boardSize,
-      squares: this.getInitialSquares(boardSize),
-      isWinner: false,
-      isTie: false,
-      xIsNext: true,
+      ...this.getInitialState(boardSize),
+      computerPlayers: this.state.computerPlayers,
     });
   };
 
   setComputerPlayers = computerPlayers => {
     this.setState({
+      ...this.getInitialState(this.state.boardSize),
       computerPlayers,
-      squares: this.getInitialSquares(this.state.boardSize),
-      isWinner: false,
-      isTie: false,
-      xIsNext: true,
     });
+  };
+
+  resetBoard = () => {
+    this.setState(this.getInitialState());
   };
 
   isGameOver = () => this.state.isTie || this.state.isWinner;
@@ -181,6 +183,7 @@ class Board extends Component {
             updateBoardSize={this.setBoardSize}
             computerCount={computerPlayers}
             updateComputerCount={this.setComputerPlayers}
+            resetBoard={this.resetBoard}
           />
         </div>
         <div className="d-flex justify-content-center">

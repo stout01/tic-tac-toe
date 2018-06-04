@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Button,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -9,6 +10,7 @@ import {
 const BoardSettings = ({
   boardSize,
   computerCount,
+  resetBoard,
   updateBoardSize,
   updateComputerCount,
 }) => {
@@ -22,7 +24,7 @@ const BoardSettings = ({
     <div className="d-flex">
       <div className="mr-3">
         <UncontrolledDropdown>
-          <DropdownToggle caret>
+          <DropdownToggle color="primary" caret>
             {computerCountText[computerCount]}
           </DropdownToggle>
           <DropdownMenu>
@@ -32,11 +34,19 @@ const BoardSettings = ({
       </div>
       <div className="mr-3">
         <UncontrolledDropdown>
-          <DropdownToggle caret>{`${boardSize}x${boardSize}`}</DropdownToggle>
+          <DropdownToggle
+            color="primary"
+            caret
+          >{`${boardSize}x${boardSize}`}</DropdownToggle>
           <DropdownMenu>
             <BoardSizeList />
           </DropdownMenu>
         </UncontrolledDropdown>
+      </div>
+      <div className="mr-3">
+        <Button color="danger" onClick={resetBoard}>
+          Reset
+        </Button>
       </div>
     </div>
   );
