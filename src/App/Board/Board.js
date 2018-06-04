@@ -54,13 +54,11 @@ class Board extends Component {
       this.state.squares,
       'marker',
     );
+
     const randomSquare =
       emptySquares[Math.floor(Math.random() * emptySquares.length)];
 
-    this.onSquareUpdate(
-      randomSquare.location.row,
-      randomSquare.location.column,
-    );
+    this.updateSquare(randomSquare.location.row, randomSquare.location.column);
   };
 
   setBoardSize = boardSize => {
@@ -95,7 +93,7 @@ class Board extends Component {
     return squares;
   };
 
-  onSquareUpdate = (row, column) => {
+  updateSquare = (row, column) => {
     const square = arrayHelpers.getCell(row, column, this.state.squares);
 
     if (this.state.isWinner || square.marker) {
@@ -201,10 +199,7 @@ class Board extends Component {
               </tr>
             </thead>
             <tbody>
-              <BoardRows
-                squares={squares}
-                onSquareUpdate={this.onSquareUpdate}
-              />
+              <BoardRows squares={squares} updateSquare={this.updateSquare} />
             </tbody>
           </table>
         </div>
@@ -213,22 +208,20 @@ class Board extends Component {
   }
 }
 
-function BoardRows({ squares, onSquareUpdate }) {
+function BoardRows({ squares, updateSquare }) {
   return squares.map((row, index) => (
     <tr key={`row-${index}`}>
-      <SquareRow row={row} onSquareUpdate={onSquareUpdate} />
+      <SquareRow row={row} updateSquare={updateSquare} />
     </tr>
   ));
 }
 
-function SquareRow({ row, onSquareUpdate }) {
+function SquareRow({ row, updateSquare }) {
   return row.map(square => (
     <Square
       key={`${square.location.row}, ${square.location.column}`}
       marker={square.marker}
-      onUpdate={() =>
-        onSquareUpdate(square.location.row, square.location.column)
-      }
+      onUpdate={() => updateSquare(square.location.row, square.location.column)}
     />
   ));
 }
