@@ -46,7 +46,10 @@ class Board extends Component {
   };
 
   performComputerTurn = () => {
-    const emptySquares = this.getEmptySquares();
+    const emptySquares = arrayHelpers.getEmptyCellsByProperty(
+      this.state.squares,
+      'marker',
+    );
     const randomSquare =
       emptySquares[Math.floor(Math.random() * emptySquares.length)];
 
@@ -89,7 +92,7 @@ class Board extends Component {
   };
 
   onSquareUpdate = (row, column) => {
-    const square = this.getSquare(row, column, this.state.squares);
+    const square = arrayHelpers.getCell(row, column, this.state.squares);
 
     if (this.state.isWinner || square.marker) {
       return;
@@ -108,16 +111,6 @@ class Board extends Component {
           draft.gameStatus = 'Tie!';
         }
       }),
-    );
-  };
-
-  getSquare = (row, column, squares) => squares[row][column];
-
-  getEmptySquares = () => {
-    return this.state.squares.reduce(
-      (flatSquares, row, rowIndex) =>
-        flatSquares.concat(row.filter(square => !square.marker)),
-      [],
     );
   };
 
