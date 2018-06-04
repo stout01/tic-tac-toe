@@ -9,7 +9,7 @@ class Board extends Component {
     super(props);
 
     this.state = {
-      squares: this.getInitialSquareState(3),
+      squares: this.getInitialSquares(3),
       gameStatus: 'Game in progress...',
       xIsNext: true,
       isWinner: false,
@@ -53,7 +53,7 @@ class Board extends Component {
   setBoardSize = boardSize => {
     this.setState({
       boardSize,
-      squares: this.getInitialSquareState(boardSize),
+      squares: this.getInitialSquares(boardSize),
       isWinner: false,
       isTie: false,
       xIsNext: true,
@@ -63,7 +63,7 @@ class Board extends Component {
   setComputerPlayers = computerPlayers => {
     this.setState({
       computerPlayers,
-      squares: this.getInitialSquareState(this.state.boardSize),
+      squares: this.getInitialSquares(this.state.boardSize),
       isWinner: false,
       isTie: false,
       xIsNext: true,
@@ -72,7 +72,7 @@ class Board extends Component {
 
   isGameOver = () => this.state.isTie || this.state.isWinner;
 
-  getInitialSquareState = boardSize => {
+  getInitialSquares = boardSize => {
     const squares = [];
     for (let row = 0; row < boardSize; row++) {
       const squareRow = [];
@@ -170,30 +170,16 @@ class Board extends Component {
     return Math.abs(rowValue) === this.state.boardSize;
   };
 
-  generateSquares = (rowIndex, row) => {
-    return row.map((square, index) => (
-      <Square
-        key={[rowIndex, index]}
-        marker={square.marker}
-        onUpdate={() => this.onSquareUpdate(rowIndex, index)}
-      />
-    ));
-  };
-
-  generateRows = () => {
-    return this.state.squares.map((row, index) => (
-      <tr key={`row-${index}`}>{this.generateSquares(index, row)}</tr>
-    ));
-  };
-
   render() {
+    const { boardSize, gameStatus, computerPlayers, squares } = this.state;
+
     return (
       <div>
         <div className="d-flex justify-content-center my-5">
           <BoardSettings
-            boardSize={this.state.boardSize}
+            boardSize={boardSize}
             updateBoardSize={this.setBoardSize}
-            computerCount={this.state.computerPlayers}
+            computerCount={computerPlayers}
             updateComputerCount={this.setComputerPlayers}
           />
         </div>
@@ -201,15 +187,40 @@ class Board extends Component {
           <table>
             <thead>
               <tr>
-                <th colSpan={this.state.boardSize}>{this.state.gameStatus}</th>
+                <th colSpan={boardSize}>{gameStatus}</th>
               </tr>
             </thead>
-            <tbody>{this.generateRows()}</tbody>
+            <tbody>
+              <BoardRows
+                squares={squares}
+                onSquareUpdate={this.onSquareUpdate}
+              />
+            </tbody>
           </table>
         </div>
       </div>
     );
   }
+}
+
+function BoardRows({ squares, onSquareUpdate }) {
+  return squares.map((row, index) => (
+    <tr key={`row-${index}`}>
+      <SquareRow row={row} onSquareUpdate={onSquareUpdate} />
+    </tr>
+  ));
+}
+
+function SquareRow({ row, onSquareUpdate }) {
+  return row.map(square => (
+    <Square
+      key={`${square.location.row}, ${square.location.column}`}
+      marker={square.marker}
+      onUpdate={() =>
+        onSquareUpdate(square.location.row, square.location.column)
+      }
+    />
+  ));
 }
 
 function getColumn(matrix, col) {
